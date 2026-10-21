@@ -6,6 +6,8 @@ styles, then keep the HTML and Figma in sync, in both directions.**
 A [Claude Code](https://claude.com/claude-code) skill. You describe what you want, Claude does the
 capture, the binding and the updates.
 
+![The same pricing page captured twice. Left: a plain capture, with raw hex colours and no text styles. Right: after html-to-figma-sync, every colour bound to a variable (ink, rule, accent) and every text layer to a text style.](assets/before-after.png)
+
 ---
 
 ## Why

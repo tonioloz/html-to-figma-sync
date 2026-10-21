@@ -63,7 +63,7 @@ logo's strokes bound to `ink` and its strike to `accent`. Select the same layers
 `--accent` in `pricing.html` follows, and the button, the strike in the logo and the "Most teams
 pick this" label all change with it.
 
-## 5. Put the image together
+## 5. The image in the README
 
-Place a "before" and an "after" screenshot of the layers panel side by side and save as
-`assets/before-after.png`, ready to add to the main README.
+`assets/before-after.png` was made from this demo: a board in the Figma file built from the two
+real frames, with the values read straight from the layers, then exported.
