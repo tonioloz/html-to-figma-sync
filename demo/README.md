@@ -65,5 +65,6 @@ pick this" label all change with it.
 
 ## 5. The image in the README
 
-`assets/before-after.png` was made from this demo: a board in the Figma file built from the two
-real frames, with the values read straight from the layers, then exported.
+`assets/browser-vs-figma.png` was made from this demo: a browser screenshot of `pricing.html` next
+to the exported "after" frame from Figma, at the same size. The counts under them come from the
+real run.

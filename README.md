@@ -1,31 +1,31 @@
 # html-to-figma-sync
 
-**Turn any HTML page into editable Figma layers bound to your design system's variables and text
-styles, then keep the HTML and Figma in sync, in both directions.**
+**Your HTML in Figma at full fidelity: the same page, not a redraw. Bound to your design system,
+and kept in sync in both directions.**
 
 A [Claude Code](https://claude.com/claude-code) skill. You describe what you want, Claude does the
 capture, the binding and the updates.
 
-![The same pricing page captured twice. Left: a plain capture, with raw hex colours and no text styles. Right: after html-to-figma-sync, every colour bound to a variable (ink, rule, accent) and every text layer to a text style.](assets/before-after.png)
+![The same pricing page twice, side by side and identical: on the left in the browser, on the right in Figma as editable layers exported by html-to-figma-sync. Below: 90 of 90 colours bound to variables, 48 of 48 text layers on text styles, and sync in both directions.](assets/browser-vs-figma.png)
 
 ---
 
 ## Why
 
-Capturing HTML into Figma is easy now. What you get back is a frame full of raw hex values and
-loose text: it looks right, but it isn't connected to anything. Change a token and nothing
-updates. Change the copy in the HTML and the Figma file is out of date. Change it in Figma and the
-code is.
+Redrawing a coded page in Figma by hand takes hours and is never quite right. Capturing it is fast,
+but what you get back is a frame full of raw hex values and loose text: it looks right, but it isn't
+connected to anything. Change a token and nothing updates. Change the copy in the HTML and the Figma
+file is out of date. Change it in Figma and the code is.
 
-`html-to-figma-sync` closes both gaps:
+`html-to-figma-sync` fixes all three:
 
+- **Full fidelity.** A real capture of your real page, every state you need, as editable layers.
+  What's in Figma is what's in the browser, down to the pixel.
 - **Bound to your design system.** Colours become your variables, text gets your text styles,
   shadows get your effect styles. Only where it's an exact match, so nothing quietly changes.
 - **Kept in sync, both ways.** Change the HTML, tell Claude, and the Figma frame follows. Copy
   changes update in place, so anything you tweaked by hand in Figma survives. Change copy or a
   token in Figma, and Claude brings it back into the code.
-- **High fidelity.** A real capture of your real page, not a redraw, so what's in Figma is what's
-  in the browser.
 
 ---
 
