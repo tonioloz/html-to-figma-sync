@@ -1,0 +1,24 @@
+{
+  "name": "html-to-figma-sync",
+  "owner": {
+    "name": "Antonio Lozano",
+    "url": "https://github.com/tonioloz"
+  },
+  "description": "HTML to Figma, bound to your design system and kept in sync.",
+  "plugins": [
+    {
+      "name": "html-to-figma-sync",
+      "source": "./",
+      "description": "Turn any HTML page into editable Figma layers bound to your design system's variables and text styles, then keep them in sync as the HTML changes.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Antonio Lozano",
+        "url": "https://github.com/tonioloz"
+      },
+      "homepage": "https://github.com/tonioloz/html-to-figma-sync",
+      "license": "MIT",
+      "category": "design",
+      "keywords": ["figma", "html", "design-system", "design-tokens", "variables", "sync"]
+    }
+  ]
+}

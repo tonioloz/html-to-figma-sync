@@ -1,0 +1,13 @@
+{
+  "name": "html-to-figma-sync",
+  "version": "1.0.0",
+  "description": "Turn any HTML page into editable Figma layers bound to your design system's variables and text styles, then keep them in sync as the HTML changes.",
+  "author": {
+    "name": "Antonio Lozano",
+    "url": "https://github.com/tonioloz"
+  },
+  "homepage": "https://github.com/tonioloz/html-to-figma-sync",
+  "repository": "https://github.com/tonioloz/html-to-figma-sync",
+  "license": "MIT",
+  "keywords": ["figma", "html", "design-system", "design-tokens", "variables", "sync"]
+}

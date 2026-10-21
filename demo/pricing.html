@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pricing · Tally</title>
+  <!--
+    Demo page for html-to-figma-sync.
+    Every colour below is a shadcn/ui "zinc" token, so after capture each one
+    binds exactly to the matching variable created by `figma-cli tokens preset shadcn`.
+    The one exception is --badge (#7c3aed): it is deliberately off-system, so the
+    end-of-job check has something honest to report.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #ffffff;
+      --foreground: #09090b;
+      --primary: #18181b;
+      --primary-foreground: #fafafa;
+      --muted: #f4f4f5;
+      --muted-foreground: #71717a;
+      --border: #e4e4e7;
+      --badge: #7c3aed; /* off-system on purpose */
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      line-height: 1.5;
+    }
+    main { max-width: 1040px; margin: 0 auto; padding: 64px 16px; }
+    header { max-width: 560px; margin-bottom: 48px; }
+    h1 { font-size: 36px; line-height: 40px; font-weight: 700; letter-spacing: -0.02em; }
+    header p { margin-top: 12px; font-size: 18px; line-height: 28px; color: var(--muted-foreground); }
+    .plans { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .plan {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .plan.featured { border-color: var(--primary); }
+    .plan-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    h2 { font-size: 18px; line-height: 28px; font-weight: 600; }
+    .badge {
+      font-size: 12px; line-height: 16px; font-weight: 600;
+      color: var(--primary-foreground); background: var(--badge);
+      padding: 4px 8px; border-radius: 999px;
+    }
+    .price { display: flex; align-items: baseline; gap: 4px; }
+    .price strong { font-size: 36px; line-height: 40px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .price span { font-size: 14px; line-height: 20px; color: var(--muted-foreground); }
+    .plan > p { font-size: 14px; line-height: 20px; color: var(--muted-foreground); margin-top: -16px; min-height: 40px; }
+    ul { list-style: none; padding: 0; display: grid; gap: 8px; font-size: 14px; line-height: 20px; }
+    li::before { content: "✓"; margin-right: 8px; color: var(--foreground); font-weight: 600; }
+    .cta {
+      margin-top: auto;
+      display: block; text-align: center; text-decoration: none;
+      font-size: 14px; line-height: 20px; font-weight: 500;
+      padding: 10px 16px; border-radius: 8px;
+      border: 1px solid var(--border); color: var(--foreground); background: var(--background);
+    }
+    .featured .cta { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+    .cta:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
+    footer { margin-top: 48px; padding: 16px; border-radius: 12px; background: var(--muted); font-size: 14px; line-height: 20px; color: var(--foreground); }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Simple pricing for growing teams</h1>
+      <p>Send invoices, chase late payments and see who owes what. Start free, upgrade when you need more.</p>
+    </header>
+
+    <section class="plans" aria-label="Plans">
+      <article class="plan">
+        <div class="plan-head"><h2>Starter</h2></div>
+        <div class="price"><strong>$0</strong><span>/month</span></div>
+        <p>For freelancers sending a handful of invoices.</p>
+        <ul>
+          <li>5 invoices a month</li>
+          <li>Card and bank payments</li>
+          <li>Email reminders</li>
+        </ul>
+        <a class="cta" href="#">Start free</a>
+      </article>
+
+      <article class="plan featured">
+        <div class="plan-head"><h2>Team</h2><span class="badge">Most popular</span></div>
+        <div class="price"><strong>$29</strong><span>/month</span></div>
+        <p>For small teams who bill every week.</p>
+        <ul>
+          <li>Unlimited invoices</li>
+          <li>Automatic late-payment chasers</li>
+          <li>3 team seats</li>
+          <li>Xero and QuickBooks sync</li>
+        </ul>
+        <a class="cta" href="#">Start free trial</a>
+      </article>
+
+      <article class="plan">
+        <div class="plan-head"><h2>Business</h2></div>
+        <div class="price"><strong>$79</strong><span>/month</span></div>
+        <p>For finance teams managing many clients.</p>
+        <ul>
+          <li>Everything in Team</li>
+          <li>Unlimited seats</li>
+          <li>Approval workflows</li>
+          <li>Priority support</li>
+        </ul>
+        <a class="cta" href="#">Talk to us</a>
+      </article>
+    </section>
+
+    <footer>All plans include a 14-day free trial. No card needed to start.</footer>
+  </main>
+</body>
+</html>
