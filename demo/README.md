@@ -1,49 +1,69 @@
 # Demo: make your own before/after
 
-A blank Figma file, a small pricing page, five minutes.
+A blank Figma file, a small pricing page, ten minutes.
 
-`pricing.html` uses shadcn/ui's default "zinc" colours, so after capture every colour binds to a
-matching variable. One badge colour (`#7c3aed`) is off-system on purpose, so the check has
-something real to report.
+`pricing.html` is a pricing page for Tally, a made-up invoicing app. Every colour, text size and
+the logo come from a small token set, so after capture every layer binds to a Figma variable or
+text style:
+
+| CSS | Figma variable (collection `Tally`) | Light | Dark |
+|---|---|---|---|
+| `--paper` | `paper` | `#fafafa` | `#111113` |
+| `--ink` | `ink` | `#18181b` | `#f4f4f5` |
+| `--ink-muted` | `ink-muted` | `#52525b` | `#a1a1aa` |
+| `--rule` | `rule` | `#d4d4d8` | `#3f3f46` |
+| `--accent` | `accent` | `#047857` | `#10b981` |
+| `--on-accent` | `on-accent` | `#fafafa` | `#052e1f` |
+
+| CSS class | Figma text style | Font |
+|---|---|---|
+| `.t-display` | `Display` | Newsreader Regular 72/72, -2% |
+| `.t-figure` | `Figure` | Newsreader Regular 56/56, -2% |
+| `.t-title` | `Title` | Newsreader Medium 28/32 |
+| `.t-lead` | `Lead` | Schibsted Grotesk Regular 18/28 |
+| `.t-body` | `Body` | Schibsted Grotesk Regular 15/24 |
+| `.t-body-strong` | `Body Strong` | Schibsted Grotesk Medium 15/24 |
+| `.t-label` | `Label` | Schibsted Grotesk Medium 13/20 |
+| `.t-wordmark` | `Wordmark` | Schibsted Grotesk SemiBold 22/24, -3% |
 
 ## 1. Set up the Figma file
 
-1. Create a new Figma design file. Call it `html-to-figma-sync demo`.
-2. Add the shadcn colour variables. Either:
-   - with [FigCli](https://github.com/silships/figma-cli): ask Claude to *"add the shadcn colour
-     preset to this file"* (`figma-cli tokens preset shadcn`), or
-   - by hand: create a collection called `shadcn/semantic` with a `Light` mode and these
-     variables: `background #ffffff`, `foreground #09090b`, `primary #18181b`,
-     `primary-foreground #fafafa`, `muted #f4f4f5`, `muted-foreground #71717a`, `border #e4e4e7`.
-3. Optional: add a few local text styles for Inter (for example 36/40 Bold, 18/28 Semibold,
-   14/20 Regular, 14/20 Medium, 12/16 Semibold) to see text styles apply too.
+1. Create a new Figma design file.
+2. Ask Claude: *"Create the Tally variables and text styles from demo/README.md in this file"*,
+   and paste the file link. Or make them by hand from the tables above.
 
 ## 2. Capture the "before"
 
-In Claude Code, inside this folder:
+> *"Capture demo/pricing.html into my demo file, in light mode, but skip the design system pass. I
+> want the raw capture."*
 
-> *"Capture demo/pricing.html into my html-to-figma-sync demo file, but skip the design system
-> pass, I want the raw capture."*
+Select a few layers and look at the right-hand panel: every fill is a raw hex.
 
-Select a few layers and screenshot the right-hand panel: every fill is a raw hex.
+Capturing tip: keep the browser tab in front while it captures. Browsers pause background tabs.
+If your computer is in dark mode, ask for light mode explicitly, or the capture comes in dark.
 
 ## 3. Capture the "after"
 
-> *"Now export demo/pricing.html to the same file properly, using the shadcn/semantic
-> collection."*
+> *"Now export demo/pricing.html to the same file properly, using the Tally collection."*
 
-Claude binds the colours and styles, then reports what it couldn't bind (the purple badge).
-Screenshot the same layers: fills now read `primary`, `foreground`, `border`.
+On the run this demo was built with: 90 of 90 colours bound, 48 of 48 text layers styled, the
+logo's strokes bound to `ink` and its strike to `accent`. Select the same layers: fills now read
+`ink`, `rule`, `accent`.
 
-## 4. Try a copy update
+## 4. Try both directions
 
-Change *"Start free trial"* to *"Start your free trial"* in `pricing.html`, then:
+**HTML to Figma.** Change the headline in `pricing.html` to *"Get paid on time, every time."*, then:
 
-> *"I changed the Team button copy, update it in Figma."*
+> *"I changed the headline, update it in Figma."*
 
-Only that layer changes, binding and style intact.
+**Figma to HTML.** In Figma, change the `accent` variable to another colour, then:
+
+> *"I changed accent in Figma, update the code."*
+
+`--accent` in `pricing.html` follows, and the button, the strike in the logo and the "Most teams
+pick this" label all change with it.
 
 ## 5. Put the image together
 
-Place the two screenshots side by side and save as `assets/before-after.png`, ready to add to the
-main README.
+Place a "before" and an "after" screenshot of the layers panel side by side and save as
+`assets/before-after.png`, ready to add to the main README.

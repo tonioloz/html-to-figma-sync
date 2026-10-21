@@ -4,120 +4,248 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pricing · Tally</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 24'%3E%3Cg fill='%2318181b'%3E%3Crect x='3' y='2' width='3' height='20'/%3E%3Crect x='9' y='2' width='3' height='20'/%3E%3Crect x='15' y='2' width='3' height='20'/%3E%3Crect x='21' y='2' width='3' height='20'/%3E%3C/g%3E%3Cpolygon fill='%23047857' points='0,18 27,5.5 28.5,8.8 1.5,21.3'/%3E%3C/svg%3E">
   <!--
     Demo page for html-to-figma-sync.
-    Every colour below is a shadcn/ui "zinc" token, so after capture each one
-    binds exactly to the matching variable created by `figma-cli tokens preset shadcn`.
-    The one exception is --badge (#7c3aed): it is deliberately off-system, so the
-    end-of-job check has something honest to report.
+
+    Every colour and text size on this page comes from the tokens below.
+    The demo Figma file has a variable collection ("Tally", Light and Dark modes)
+    and text styles with the SAME names, so after capture every layer binds exactly:
+
+      CSS custom property   Figma variable        CSS class        Figma text style
+      --paper               paper                 .t-display       Display
+      --ink                 ink                   .t-figure        Figure
+      --ink-muted           ink-muted             .t-title         Title
+      --rule                rule                  .t-lead          Lead
+      --accent              accent                .t-body          Body
+      --on-accent           on-accent             .t-body-strong   Body Strong
+                                                  .t-label         Label
+                                                  .t-wordmark      Wordmark
+
+    The logo mark is an inline SVG (a tally gate: four strokes and a strike)
+    filled with --ink and --accent, so it binds to the same variables.
+
+    Fonts: Newsreader (serif, names and figures) and Schibsted Grotesk (sans, everything else).
+    Loaded from Google Fonts for the demo. Self-host them in production.
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    /* ---------- Tokens ---------- */
     :root {
-      --background: #ffffff;
-      --foreground: #09090b;
-      --primary: #18181b;
-      --primary-foreground: #fafafa;
-      --muted: #f4f4f5;
-      --muted-foreground: #71717a;
-      --border: #e4e4e7;
-      --badge: #7c3aed; /* off-system on purpose */
+      --paper: #fafafa;
+      --ink: #18181b;
+      --ink-muted: #52525b;
+      --rule: #d4d4d8;
+      --accent: #047857;
+      --on-accent: #fafafa;
+
+      --serif: "Newsreader", Georgia, serif;
+      --sans: "Schibsted Grotesk", system-ui, sans-serif;
     }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #111113;
+        --ink: #f4f4f5;
+        --ink-muted: #a1a1aa;
+        --rule: #3f3f46;
+        --accent: #10b981;
+        --on-accent: #052e1f;
+      }
+    }
+
+    /* ---------- Text styles (one class per Figma text style) ---------- */
+    .t-display     { font: 400 72px/72px var(--serif); letter-spacing: -0.02em; }
+    .t-figure      { font: 400 56px/56px var(--serif); letter-spacing: -0.02em; font-variant-numeric: lining-nums tabular-nums; }
+    .t-title       { font: 500 28px/32px var(--serif); }
+    .t-lead        { font: 400 18px/28px var(--sans); }
+    .t-body        { font: 400 15px/24px var(--sans); }
+    .t-body-strong { font: 500 15px/24px var(--sans); }
+    .t-label       { font: 500 13px/20px var(--sans); }
+    .t-wordmark    { font: 600 22px/24px var(--sans); letter-spacing: -0.03em; }
+
+    /* ---------- Base ---------- */
     * { box-sizing: border-box; margin: 0; }
-    body {
-      font-family: "Inter", system-ui, sans-serif;
-      background: var(--background);
-      color: var(--foreground);
-      line-height: 1.5;
-    }
-    main { max-width: 1040px; margin: 0 auto; padding: 64px 16px; }
-    header { max-width: 560px; margin-bottom: 48px; }
-    h1 { font-size: 36px; line-height: 40px; font-weight: 700; letter-spacing: -0.02em; }
-    header p { margin-top: 12px; font-size: 18px; line-height: 28px; color: var(--muted-foreground); }
-    .plans { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-    .plan {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    .plan.featured { border-color: var(--primary); }
-    .plan-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    h2 { font-size: 18px; line-height: 28px; font-weight: 600; }
-    .badge {
-      font-size: 12px; line-height: 16px; font-weight: 600;
-      color: var(--primary-foreground); background: var(--badge);
-      padding: 4px 8px; border-radius: 999px;
-    }
-    .price { display: flex; align-items: baseline; gap: 4px; }
-    .price strong { font-size: 36px; line-height: 40px; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .price span { font-size: 14px; line-height: 20px; color: var(--muted-foreground); }
-    .plan > p { font-size: 14px; line-height: 20px; color: var(--muted-foreground); margin-top: -16px; min-height: 40px; }
-    ul { list-style: none; padding: 0; display: grid; gap: 8px; font-size: 14px; line-height: 20px; }
-    li::before { content: "✓"; margin-right: 8px; color: var(--foreground); font-weight: 600; }
+    body { background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+    @media (min-width: 768px) { .wrap { padding: 0 48px; } }
+
+    /* ---------- Nav ---------- */
+    nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    nav a { text-decoration: none; }
+    .logo { display: inline-flex; align-items: center; gap: 10px; }
+    .logo svg { display: block; width: 28px; height: 24px; }
+    .logo .strokes { fill: var(--ink); }
+    .logo .strike { fill: var(--accent); }
+    nav a.t-body-strong:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+    /* ---------- Header ---------- */
+    header { padding: 64px 0; }
+    header h1 { max-width: 12ch; text-wrap: balance; }
+    header p { margin-top: 24px; max-width: 46ch; color: var(--ink-muted); }
+
+    /* ---------- Ledger (mobile first: one plan after another) ---------- */
+    .ledger { border-top: 2px solid var(--ink); }
+    .row-labels span { display: none; }
+    .row-labels { border-bottom: 1px solid var(--rule); }
+    .note { color: var(--ink-muted); max-width: 30ch; padding: 24px 0; }
+
+    .plan { position: relative; padding: 32px 0 40px; border-bottom: 1px solid var(--rule); }
+    .plan:has(+ .featured) { border-bottom: 0; }
+    /* The recommended plan: an accent rule laid on the ledger line */
+    .plan.featured::before { content: ""; position: absolute; left: 0; right: 0; top: -2px; height: 4px; background: var(--accent); }
+
+    .plan-head { display: grid; gap: 8px; align-content: start; }
+    .pick { color: var(--accent); }
+    .pick.empty { display: none; }
+    @media (min-width: 960px) { .pick.empty { display: block; visibility: hidden; } }
+    .plan-head .t-body { color: var(--ink-muted); max-width: 28ch; }
+    .price { display: flex; align-items: baseline; gap: 8px; margin-top: 16px; }
+    .price .t-label { color: var(--ink-muted); }
+
     .cta {
-      margin-top: auto;
-      display: block; text-align: center; text-decoration: none;
-      font-size: 14px; line-height: 20px; font-weight: 500;
-      padding: 10px 16px; border-radius: 8px;
-      border: 1px solid var(--border); color: var(--foreground); background: var(--background);
+      display: block; margin-top: 24px; padding: 12px 16px; text-align: center; text-decoration: none;
+      border: 1px solid var(--ink); color: var(--ink); background: var(--paper);
+      transition: box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1), transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .featured .cta { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
-    .cta:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
-    footer { margin-top: 48px; padding: 16px; border-radius: 12px; background: var(--muted); font-size: 14px; line-height: 20px; color: var(--foreground); }
+    .cta:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+    .cta:active { transform: translateY(1px); }
+    .plan.featured .cta { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+    .plan.featured .cta:hover { box-shadow: inset 0 0 0 1px var(--on-accent); }
+
+    dl { margin-top: 32px; display: grid; gap: 12px; }
+    dl div { display: grid; grid-template-columns: 1fr auto; gap: 16px; }
+    dt { color: var(--ink-muted); }
+    dd.no { color: var(--ink-muted); }
+
+    /* ---------- Desktop: one ledger, rows read across all three plans ---------- */
+    @media (min-width: 960px) {
+      .ledger {
+        display: grid;
+        grid-template-columns: 1.1fr repeat(3, 1fr);
+        grid-template-rows: auto repeat(6, auto);
+      }
+      .row-labels, .plan {
+        grid-row: 1 / span 7;
+        display: grid;
+        grid-template-rows: subgrid;
+        padding: 0;
+        border-bottom: 0;
+      }
+      /* Two-line description slot in every column keeps prices and buttons on one line */
+      .plan-head .t-body { min-height: 48px; }
+      .plan.featured::before { right: 32px; }
+      /* Cells carry the gutter, so every rule runs unbroken across the page */
+      .plan-head, .note, dl div, .row-labels span { padding-right: 32px; }
+      .plan:last-child > *, .plan:last-child dl div { padding-right: 0; }
+      .plan-head, .note { padding-top: 28px; padding-bottom: 40px; border-bottom: 1px solid var(--rule); }
+      .note { max-width: none; }
+      dl { display: contents; }
+      dl div, .row-labels span { display: block; padding-top: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
+      dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .row-labels span { color: var(--ink-muted); }
+    }
+
+    footer { padding: 40px 0 64px; color: var(--ink-muted); }
+
+    @media (prefers-reduced-motion: reduce) { .cta { transition: none; } }
   </style>
 </head>
 <body>
-  <main>
+  <div class="wrap">
+    <nav aria-label="Main">
+      <a class="logo" href="#" aria-label="Tally home">
+        <svg viewBox="0 0 28 24" aria-hidden="true">
+          <g class="strokes">
+            <rect x="3" y="2" width="3" height="20"/>
+            <rect x="9" y="2" width="3" height="20"/>
+            <rect x="15" y="2" width="3" height="20"/>
+            <rect x="21" y="2" width="3" height="20"/>
+          </g>
+          <polygon class="strike" points="0,18 27,5.5 28.5,8.8 1.5,21.3"/>
+        </svg>
+        <span class="t-wordmark">Tally</span>
+      </a>
+      <a class="t-body-strong" href="#">Sign in</a>
+    </nav>
+
     <header>
-      <h1>Simple pricing for growing teams</h1>
-      <p>Send invoices, chase late payments and see who owes what. Start free, upgrade when you need more.</p>
+      <h1 class="t-display">Get paid on time, at any size.</h1>
+      <p class="t-lead">Send invoices, chase late payments and see who owes you what. Start free, or try Team and Business for 14 days.</p>
     </header>
 
-    <section class="plans" aria-label="Plans">
-      <article class="plan">
-        <div class="plan-head"><h2>Starter</h2></div>
-        <div class="price"><strong>$0</strong><span>/month</span></div>
-        <p>For freelancers sending a handful of invoices.</p>
-        <ul>
-          <li>5 invoices a month</li>
-          <li>Card and bank payments</li>
-          <li>Email reminders</li>
-        </ul>
-        <a class="cta" href="#">Start free</a>
-      </article>
+    <main class="ledger" aria-label="Plans">
+      <div class="row-labels">
+        <p class="note t-body">All plans include unlimited clients, card and bank payments, and your logo on every invoice.</p>
+        <span class="t-body" aria-hidden="true">Invoices a month</span>
+        <span class="t-body" aria-hidden="true">Team seats</span>
+        <span class="t-body" aria-hidden="true">Automatic payment chasers</span>
+        <span class="t-body" aria-hidden="true">Xero and QuickBooks sync</span>
+        <span class="t-body" aria-hidden="true">Approval workflows</span>
+        <span class="t-body" aria-hidden="true">Support</span>
+      </div>
 
-      <article class="plan featured">
-        <div class="plan-head"><h2>Team</h2><span class="badge">Most popular</span></div>
-        <div class="price"><strong>$29</strong><span>/month</span></div>
-        <p>For small teams who bill every week.</p>
-        <ul>
-          <li>Unlimited invoices</li>
-          <li>Automatic late-payment chasers</li>
-          <li>3 team seats</li>
-          <li>Xero and QuickBooks sync</li>
-        </ul>
-        <a class="cta" href="#">Start free trial</a>
-      </article>
+      <section class="plan" aria-labelledby="p-starter">
+        <div class="plan-head">
+          <p class="t-label pick empty" aria-hidden="true">Most teams pick this</p>
+          <h2 id="p-starter" class="t-title">Starter</h2>
+          <p class="t-body">For freelancers with a handful of clients.</p>
+          <div class="price"><span class="t-figure">$0</span><span class="t-label">per month</span></div>
+          <a class="cta t-body-strong" href="#">Choose Starter</a>
+        </div>
+        <dl>
+          <div><dt class="t-body">Invoices a month</dt><dd class="t-body">5</dd></div>
+          <div><dt class="t-body">Team seats</dt><dd class="t-body">1</dd></div>
+          <div><dt class="t-body">Automatic payment chasers</dt><dd class="t-body no">No</dd></div>
+          <div><dt class="t-body">Xero and QuickBooks sync</dt><dd class="t-body no">No</dd></div>
+          <div><dt class="t-body">Approval workflows</dt><dd class="t-body no">No</dd></div>
+          <div><dt class="t-body">Support</dt><dd class="t-body">Email</dd></div>
+        </dl>
+      </section>
 
-      <article class="plan">
-        <div class="plan-head"><h2>Business</h2></div>
-        <div class="price"><strong>$79</strong><span>/month</span></div>
-        <p>For finance teams managing many clients.</p>
-        <ul>
-          <li>Everything in Team</li>
-          <li>Unlimited seats</li>
-          <li>Approval workflows</li>
-          <li>Priority support</li>
-        </ul>
-        <a class="cta" href="#">Talk to us</a>
-      </article>
-    </section>
+      <section class="plan featured" aria-labelledby="p-team">
+        <div class="plan-head">
+          <p class="t-label pick">Most teams pick this</p>
+          <h2 id="p-team" class="t-title">Team</h2>
+          <p class="t-body">For small studios billing every week.</p>
+          <div class="price"><span class="t-figure">$29</span><span class="t-label">per month</span></div>
+          <a class="cta t-body-strong" href="#">Choose Team</a>
+        </div>
+        <dl>
+          <div><dt class="t-body">Invoices a month</dt><dd class="t-body">Unlimited</dd></div>
+          <div><dt class="t-body">Team seats</dt><dd class="t-body">3</dd></div>
+          <div><dt class="t-body">Automatic payment chasers</dt><dd class="t-body">Included</dd></div>
+          <div><dt class="t-body">Xero and QuickBooks sync</dt><dd class="t-body">Included</dd></div>
+          <div><dt class="t-body">Approval workflows</dt><dd class="t-body no">No</dd></div>
+          <div><dt class="t-body">Support</dt><dd class="t-body">Email and chat</dd></div>
+        </dl>
+      </section>
 
-    <footer>All plans include a 14-day free trial. No card needed to start.</footer>
-  </main>
+      <section class="plan" aria-labelledby="p-business">
+        <div class="plan-head">
+          <p class="t-label pick empty" aria-hidden="true">Most teams pick this</p>
+          <h2 id="p-business" class="t-title">Business</h2>
+          <p class="t-body">For finance teams with many clients.</p>
+          <div class="price"><span class="t-figure">$79</span><span class="t-label">per month</span></div>
+          <a class="cta t-body-strong" href="#">Choose Business</a>
+        </div>
+        <dl>
+          <div><dt class="t-body">Invoices a month</dt><dd class="t-body">Unlimited</dd></div>
+          <div><dt class="t-body">Team seats</dt><dd class="t-body">Unlimited</dd></div>
+          <div><dt class="t-body">Automatic payment chasers</dt><dd class="t-body">Included</dd></div>
+          <div><dt class="t-body">Xero and QuickBooks sync</dt><dd class="t-body">Included</dd></div>
+          <div><dt class="t-body">Approval workflows</dt><dd class="t-body">Included</dd></div>
+          <div><dt class="t-body">Support</dt><dd class="t-body">Priority, 4-hour reply</dd></div>
+        </dl>
+      </section>
+    </main>
+
+    <footer>
+      <p class="t-body">Prices in US dollars, before tax. Cancel any time.</p>
+    </footer>
+  </div>
 </body>
 </html>

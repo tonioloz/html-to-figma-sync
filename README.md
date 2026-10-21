@@ -98,7 +98,7 @@ Each of these exists because breaking it damaged a real file.
 
 ## Try it in five minutes
 
-The [`demo/`](demo) folder has a small pricing page built on shadcn/ui's colour tokens, and the
+The [`demo/`](demo) folder has an editorial pricing page for a made-up invoicing app, built on six colour tokens and eight text styles, and the
 steps to make your own before/after in a blank Figma file. See [`demo/README.md`](demo/README.md).
 
 ---
