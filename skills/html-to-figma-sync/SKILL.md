@@ -1,20 +1,21 @@
 ---
 name: html-to-figma-sync
-description: Turn any HTML page into editable Figma layers bound to the user's design system (colour variables, text styles, effect styles), then keep them in sync as the HTML changes. Use when someone asks to export, capture, send or push HTML into Figma, to "update this copy in Figma", to "update this screen in Figma", or to check that frames in Figma use their design system's variables and styles. Uses the official Figma MCP (generate_figma_design, use_figma, search_design_system). FigCli is optional, only for the final check.
+description: Turn any HTML page into editable Figma layers bound to the user's design system (colour variables, text styles, effect styles), then keep the two in sync in both directions. Use when someone asks to export, capture, send or push HTML into Figma, to "update this copy in Figma", to "update this screen in Figma", to bring Figma changes back into the code ("I changed the headline in Figma, update the HTML", "pull my Figma changes"), or to check that frames in Figma use their design system's variables and styles. Uses the official Figma MCP (generate_figma_design, use_figma, search_design_system). FigCli is optional, only for the final check.
 ---
 
 # HTML to Figma sync
 
 Captures HTML pages into Figma as real, editable layers, binds them to the user's design system,
-and keeps them in step when the HTML changes.
+and keeps the HTML and Figma in step in both directions.
 
-Nothing syncs on its own. The user changes the HTML, then asks for that change in Figma:
+Nothing syncs on its own. The user changes one side, then asks for that change on the other:
 
 | The user says | Job |
 |---|---|
 | "Export these pages to Figma" | [First export](#first-export) |
 | "I changed the button copy, update it in Figma" | [Copy update in place](#copy-update-in-place) |
 | "I reworked the pricing page, update it in Figma" | [Page re-export](#page-re-export) |
+| "I changed the headline in Figma, update the HTML" / "pull my Figma changes" | [Figma to code](#figma-to-code) |
 | "Check this frame" | [The check](#the-check) |
 
 ## Requirements
@@ -38,6 +39,8 @@ These hold for every job. Each one exists because breaking it damaged a real fil
 - **Show changes before making them** when they touch existing frames (copy updates, fixes after
   the check). Captures into an empty page are fine to run.
 - **Read-only means read-only.** The check never fixes. It reports and offers.
+- **Never overwrite a change made on the other side.** When the same thing changed in both the HTML
+  and Figma, show both and let the user pick.
 
 ## The map file
 
@@ -57,6 +60,8 @@ which design system to bind to, so Claude asks once.
     "effectStyles": "library",
     "fonts": ["Inter"]
   },
+  "tokenMap": { "primary": "--primary", "muted-foreground": "--muted-foreground" },
+  "styleMap": { "Heading/Display": "h1", "Body/Default": "body" },
   "screens": [
     {
       "source": "pricing.html",
@@ -72,7 +77,33 @@ which design system to bind to, so Claude asks once.
 - `designSystem.source` is `library` (a published Figma library enabled in the file) or `local`
   (variables and styles defined in the file itself).
 - `textStyleMatch` is `exact` (default) or `nearest`. See [Text styles](#3-apply-text-styles).
+- `tokenMap` links each colour variable to the CSS custom property that holds it. `styleMap` links
+  each text style to the CSS selector that sets it. Both are filled in the first time
+  [Figma to code](#figma-to-code) needs them.
 - The user can edit this file by hand. Respect what it says.
+
+## The snapshot
+
+After every sync, in either direction, save what the frame looked like to
+`.figma-sync/<frameName>.json` next to the map (slashes and spaces in the name become `-`):
+
+```json
+{
+  "nodeId": "12:345",
+  "savedAt": "2026-10-21T10:42:00Z",
+  "texts": { "12:401": "Start free trial", "12:388": "Simple pricing for growing teams" },
+  "variables": { "primary": "#18181b", "foreground": "#09090b" },
+  "textStyles": { "Heading/Display": { "family": "Inter", "style": "Bold", "size": 36, "lineHeight": 40, "letterSpacing": -0.72 } }
+}
+```
+
+The snapshot is what makes two-way sync safe. Comparing Figma now with the snapshot shows what
+changed **in Figma**. Comparing the HTML now with the snapshot shows what changed **in the HTML**.
+The same thing changed on both sides means a conflict, and the user decides.
+
+Read texts with `use_figma` (node id and `characters` for every TEXT node in the frame), variable
+values from the mapped collection and mode (hex, aliases resolved), and text style values from the
+mapped styles.
 
 ## First run: set up
 
@@ -141,7 +172,8 @@ Save this to figma-map.json?
 5. Move each frame onto the mapped page, name it `<Page> / <State>`, and record `nodeId`,
    `frameName`, `source`, `state` and `exportedAt` in `screens`.
 6. Run the [design system pass](#the-design-system-pass).
-7. Run [the check](#the-check).
+7. Save the [snapshot](#the-snapshot).
+8. Run [the check](#the-check).
 
 For external sites (not localhost), use the Playwright capture path instead of the script tag.
 
@@ -155,7 +187,8 @@ hand in Figma all stay. Only the text changes.
 2. Read the frame's text layers with `use_figma` (read-only): id, name, `characters`.
 3. Work out the change from what the user said, or by diffing the HTML text against the Figma
    text. Match each change to a layer by its **current text**. Captured layer names aren't
-   reliable.
+   reliable. If the layer's text in Figma differs from the [snapshot](#the-snapshot), someone
+   edited it in Figma too: show both versions and ask which one wins.
 4. Show the list, then wait for a yes:
 
    ```
@@ -170,7 +203,8 @@ hand in Figma all stay. Only the text changes.
    - **Mixed styles** (a bold word in a sentence, a link): don't rewrite it. List it for the user.
    - **Copy split across several layers:** list it. Don't merge layers.
 6. Report any layer whose height changed (the new copy wraps onto another line).
-7. Update `exportedAt`, then run [the check](#the-check) on the frame.
+7. Update `exportedAt`, save the [snapshot](#the-snapshot), then run [the check](#the-check) on the
+   frame.
 
 ## Page re-export
 
@@ -180,7 +214,57 @@ For a change to layout or structure.
 2. Place the new frame **next to** the old one. Don't delete the old one. Give the user both node
    ids. Say that hand tweaks on the old frame don't carry over.
 3. Point the map's `nodeId` at the new frame.
-4. Run the [design system pass](#the-design-system-pass) and [the check](#the-check).
+4. Run the [design system pass](#the-design-system-pass), save the [snapshot](#the-snapshot), and
+   run [the check](#the-check).
+
+## Figma to code
+
+The other direction: the user changed something in Figma and wants the HTML to follow. v1 covers
+**copy** and **design tokens**. It does not cover layout.
+
+1. **Find what changed in Figma.** Read the frame and the design system as described in
+   [The snapshot](#the-snapshot) and compare with the saved snapshot. If there is no snapshot (the
+   frame was exported before this existed), compare Figma with the HTML directly and treat every
+   difference as "unknown side": show it and ask which side is right.
+2. **Sort each change** into one of these:
+
+   | Changed in Figma | Goes to the code as |
+   |---|---|
+   | Text in a layer | The same text replaced in the HTML **source** (`source` in the map, never the export copy) |
+   | A colour variable's value | The CSS custom property in `tokenMap` |
+   | A text style's size, weight, line height or letter spacing | The CSS rule for the selector in `styleMap` |
+   | Anything else (moved, resized, new or deleted layers, a layer bound to a different variable) | **Not applied.** Listed as "change by hand in the code", with the layer name |
+
+3. **Check the other side.** For each change, look at the HTML. If the HTML still has the snapshot's
+   value, it's a clean Figma change. If the HTML has a third value, both sides changed: it's a
+   conflict.
+4. **Show the plan, then wait for a yes:**
+
+   ```
+   From Figma → pricing.html
+     Copy     "Simple pricing for growing teams"  →  "Pricing that grows with you"
+     Token    --primary   #18181b  →  #2563eb   (variable "primary")
+     Style    h1 font-size   36px  →  40px      (text style "Heading/Display")
+   Conflict   "Start free trial": HTML says "Try it free", Figma says "Start your free trial". Which one?
+   By hand    "Team" card moved above "Starter" (layout, not applied)
+   ```
+5. **Apply only what was approved:**
+   - **Copy:** find the old text in the source HTML. One match: replace it. Several: show each
+     with its surrounding line and ask which. No match (the text is built by a script, or split
+     across tags): list it, don't guess. Keep the HTML around the text untouched (tags, entities,
+     whitespace).
+   - **Token:** if `tokenMap` has no entry for the variable, look for a custom property with the
+     same name (`primary` to `--primary`, `bg/surface` to `--bg-surface`). Confirm it with the
+     user the first time, then save it to `tokenMap`. Change only that declaration's value. Match
+     the file's existing format (hex case, `rgb()`, `oklch()`).
+   - **Text style:** if `styleMap` has no entry, ask which selector the style belongs to and save it.
+     Change only the properties that changed.
+6. **Make the two sides agree again.** If tokens or styles changed, Figma already shows the new
+   values, so nothing to push back. Save a new [snapshot](#the-snapshot).
+7. Report what changed in the code, file by file, and what was left for the user to do by hand.
+
+Never edit layout CSS, never add or remove elements, and never touch anything the user didn't
+approve in step 4.
 
 ## The design system pass
 
