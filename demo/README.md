@@ -45,5 +45,5 @@ Only that layer changes, binding and style intact.
 
 ## 5. Put the image together
 
-Place the two screenshots side by side and save as `assets/before-after.png`. That's the image the
-main README shows.
+Place the two screenshots side by side and save as `assets/before-after.png`, ready to add to the
+main README.

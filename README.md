@@ -6,8 +6,6 @@ styles, then keep them in sync as the HTML changes.**
 A [Claude Code](https://claude.com/claude-code) skill. You describe what you want, Claude does the
 capture, the binding and the updates.
 
-![Before and after: the same captured frame, first with raw hex values, then bound to design system variables and text styles](assets/before-after.png)
-
 ---
 
 ## Why
